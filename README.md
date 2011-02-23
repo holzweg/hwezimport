@@ -21,7 +21,6 @@ Usage
       --parentnode=VALUE  Parent node ID
       --userid=VALUE      ID of importing user
 
-
 Writing handlers
 ----------------
 
