@@ -9,7 +9,7 @@ $script = eZScript::instance(array('description' => ("HwImport Universal data im
                                                      "\n" .
                                                      "(c) 2011 holzweg e-commerce solutions\n" .
                                                      "http://www.holzweg.com\n\n" .
-                                                     "./bin/php/hwimport.php --handler=MyCustomHandler --data=/tmp/data.xlsx --parentnode=1234 --userid=15"),
+                                                     "./bin/php/hwimport.php --handler=MyCustomHandler --data=/tmp/data.xlsx --parentnode=1234 --userid=15 --limit=10"),
                                      'use-session' => false,
                                      'use-modules' => true,
                                      'use-extensions' => true,
@@ -18,12 +18,13 @@ $script = eZScript::instance(array('description' => ("HwImport Universal data im
 
 $script->startup();
 
-$options = $script->getOptions('[handler:][data:][parentnode:][userid:]', '',
+$options = $script->getOptions('[handler:][data:][parentnode:][userid:][offset:][limit:]', '',
                                 array( 'handler' => 'Handler identifier',
                                        'data' => 'Data file',
                                        'parentnode' => 'Parent node ID',
-                                       'userid' => 'ID of importing user'));
-
+                                       'userid' => 'ID of importing user',
+                                       'offset' => 'Offset from the starting row',
+                                       'limit' => 'Limit number of imported records'));
 
 $script->initialize();
 
@@ -45,6 +46,18 @@ if(empty($options['parentnode'])) {
 if(empty($options['userid'])) {
     $cli->error("Missing user option");
     $script->shutdown(1);
+}
+
+if(empty($options['offset'])) {
+    $offset = 0;
+} else {
+    $offset = (int) $options['offset'];
+}
+
+if(empty($options['limit'])) {
+    $limit = 0;
+} else {
+    $limit = (int) $options['limit'];
 }
 
 /** -------------------------------------------------------------------------- */
@@ -76,6 +89,8 @@ try {
     $handler->setCli($cli);
     $handler->setUser($user);
     $handler->setParentNode($parentNode);
+    $handler->setOffset($offset);
+    $handler->setLimit($limit);
     $handler->run();
 } catch(HwImport_Exception $e) {
     $cli->error($e->getMessage());

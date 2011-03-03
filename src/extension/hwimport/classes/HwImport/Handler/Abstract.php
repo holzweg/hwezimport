@@ -69,6 +69,29 @@ abstract class HwImport_Handler_Abstract implements HwImport_Handler_Interface
     protected $_parentNode;
 
     /**
+     * Starting row
+     *
+     * Basically the same as offset, but should be used by handler classes to
+     * store a general start row for the data definition while offset should be
+     * used on the command line while importing.
+     *
+     * @var int
+     */
+    protected $_startRow = 0;
+
+    /**
+     * Offset from the starting row
+     * @var int
+     */
+    protected $_offset = 0;
+
+    /**
+     * Import limit
+     * @var int
+     */
+    protected $_limit = 0;
+
+    /**
      * Set the data file location
      *
      * @param string $datafile
@@ -150,6 +173,84 @@ abstract class HwImport_Handler_Abstract implements HwImport_Handler_Interface
     public function getParentNode()
     {
         return $this->_parentNode;
+    }
+
+    /**
+     * Set the starting row
+     *
+     * @param  int $startRow
+     * @throws HwImport_Exception
+     */
+    public function setStartRow($startRow)
+    {
+        $startRow = (int) $startRow;
+        if($startRow <= 0) {
+            throw new HwImport_Exception('Invalid start row.');
+        }
+
+        $this->_startRow = $startRow;
+    }
+
+    /**
+     * Get the starting row
+     *
+     * @return int
+     */
+    public function getStartRow()
+    {
+        return $this->_startRow;
+    }
+
+    /**
+     * Offset from the starting row.
+     *
+     * @param  int $offset
+     * @throws HwImport_Exception
+     */
+    public function setOffset($offset)
+    {
+        $offset = (int) $offset;
+        if($offset < 0) {
+            throw new HwImport_Exception('Invalid offset.');
+        }
+
+        $this->_offset = $offset;
+    }
+
+    /**
+     * Get the offset
+     *
+     * @return int
+     */
+    public function getOffset()
+    {
+        return $this->_offset;
+    }
+
+    /**
+     * Limit import to $limit records
+     *
+     * @param  int $limit
+     * @throws HwImport_Exception
+     */
+    public function setLimit($limit)
+    {
+        $limit = (int) $limit;
+        if($limit < 0) {
+            throw new HwImport_Exception('Invalid limit.');
+        }
+
+        $this->_limit = $limit;
+    }
+
+    /**
+     * Get the limit
+     *
+     * @return int
+     */
+    public function getLimit()
+    {
+        return $this->_limit;
     }
 
     /**

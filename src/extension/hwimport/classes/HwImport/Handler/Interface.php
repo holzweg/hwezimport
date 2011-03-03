@@ -50,6 +50,57 @@ interface HwImport_Handler_Interface
     public function setParentNode(eZContentObjectTreeNode $parentNode);
     public function getParentNode();
 
+    /**
+     * Set the starting row
+     *
+     * @param  int $startRow
+     * @throws HwImport_Exception
+     */
+    public function setStartRow($startRow);
+
+    /**
+     * Get the starting row
+     *
+     * @return int
+     */
+    public function getStartRow();
+
+    /**
+     * Set the offset from the starting row.
+     *
+     * @param  int $offset
+     * @throws HwImport_Exception
+     */
+    public function setOffset($offset);
+
+    /**
+     * Get the offset
+     *
+     * @return int
+     */
+    public function getOffset();
+
+    /**
+     * Set the limit
+     *
+     * @param  int $limit
+     * @throws HwImport_Exception
+     */
+    public function setLimit($limit);
+
+    /**
+     * Get the limit
+     *
+     * @return int
+     */
+    public function getLimit();
+
+    /**
+     * Get an instance of the used content class
+     *
+     * @return eZContentClass
+     * @throws HwImport_Exception
+     */
     public function getContentClass();
     public function getContentClassIdentifier();
 
