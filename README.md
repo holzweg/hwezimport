@@ -13,13 +13,17 @@ Drop <code>extension/hwimport</code> to your extension directory and <code>bin/p
 Usage
 -----
 
-    php bin/php/hwimport.php --handler=MyCustomHandler --data=/tmp/importdata.xlsx --parentnode=1234 --userid=15
+    php bin/php/hwimport.php --handler=MyCustomHandler --data=/tmp/importdata.xlsx --parentnode=1234 --userid=15 --limit=15
 
     Options:
       --handler=VALUE     Handler identifier
       --data=VALUE        Data file
       --parentnode=VALUE  Parent node ID
       --userid=VALUE      ID of importing user
+
+    Optional options:
+      --offset=VALUE      Offset from the starting row
+      --limit=VALUE       Limit number of imported records
 
 Writing handlers
 ----------------

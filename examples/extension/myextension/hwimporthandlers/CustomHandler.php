@@ -3,10 +3,10 @@
 require_once '/path/to/library/PHPExcel.php');
 
 /**
- * Sample handler class which imports contact data from an Excel 2007 table
+ * Sample handler class which imports contact data from an Excel file.
  * Uses PHPExcel (http://phpexcel.codeplex.com/) to access Excel data
  */
-class MyExtension_Handler_CustomHandlerExcel2k7 extends HwImport_Handler_Abstract
+class MyExtension_Handler_CustomHandlerExcel extends HwImport_Handler_Abstract
 {
     /**
      * Determines the content class to use for new nodes
@@ -14,29 +14,54 @@ class MyExtension_Handler_CustomHandlerExcel2k7 extends HwImport_Handler_Abstrac
      */
     protected $_contentClassIdentifier = 'my_content_class_identifier';
 
+    /**
+     * Row to start from
+     * Assumes row 1 is a heading row, so let's start at row 2
+     * @var int
+     */
+    protected $_startRow = 2;
+
     public function run()
     {
         // check prerequisites
         parent::run();
 
-        // assumes row 1 is a heading row, so let's start at row 2
-        $row = 2;
+        // counter while iterating through rows
+        $counter = 0;
+
+        // starting row + offset set on command line
+        $row = $this->getStartRow() + $this->getOffset();
 
         $hasContent = true;
         while($hasContent == true) {
-            // run until we hit an empty cell
+            // run until we hit an empty cell in column A
             $name = trim($this->_getCellValue($row, 0));
             if(empty($name)) {
                 $hasContent = false;
                 continue;
             }
 
-            // basic data
+            // check if we are over limit and abort otherwise
+            if($this->getLimit() > 0 && $counter == $this->getLimit()) {
+                $hasContent = false;
+                continue;
+            }
+
+            // object data
+            // assumes all your attributes in your content class are text lines
+            // except the country attribute which is set to country
             $data = array();
             $data['name'] = $name;
             $data['street'] = trim($this->_getCellValue($row, 1));
             $data['zip'] = trim($this->_getCellValue($row, 2));
             $data['city'] = trim($this->_getCellValue($row, 3));
+
+            // must be an Alpha2-ISO-Code in Excel file (e.g. DE or US) for the country attribute
+            // depending on the attribute you must pass a custom formatted string
+            // see https://github.com/ezsystems/ezpublish/blob/master/doc/features/3.9/to_from_string_datatype_functionality.txt
+            // for details on different data types
+            $data['country'] = trim($this->_getCellValue($row, 4));
+
             $data['telephone'] = trim($this->_getCellValue($row, 5));
             $data['mobile'] = trim($this->_getCellValue($row, 6));
             $data['email'] = trim($this->_getCellValue($row, 7));
@@ -48,36 +73,43 @@ class MyExtension_Handler_CustomHandlerExcel2k7 extends HwImport_Handler_Abstrac
 
             // publish object
             $contentObject = eZContentFunctions::createAndPublishObject($record);
-            $dataMap = $contentObject->dataMap();
-
-            // set the country attribute with type's fromString() method
-            // see https://github.com/ezsystems/ezpublish/blob/master/doc/features/3.9/to_from_string_datatype_functionality.txt
-            $country = $dataMap['country'];
-            $countryType = new eZCountryType();
-            $countryType->fromString($country, trim($this->_getCellValue($row, 4)));
-            $country->sync();
 
             // some output
-            $this->getCli()->output('Imported ' . $name);
+            $this->getCli()->output($counter + 1 . '# - Imported ' . $name);
 
+            // increase our iterators
             ++$row;
+            ++$counter;
         }
 
         // clean up
-        $this->_excel->disconnectWorksheets();
-        unset($this->_excel);
+        if(isset($this->_excel)) {
+            $this->_excel->disconnectWorksheets();
+            unset($this->_excel);
+        }
     }
 
+    /**
+     * Get a PHPExcel instance with our datafile loaded
+     * 
+     * @return PHPExcel
+     */
     protected function _getExcel()
     {
         if($this->_excel === null) {
-            $reader = new PHPExcel_Reader_Excel2007();
-            $this->_excel = $reader->load($this->getDatafile());
+            $this->_excel = PHPExcel_IOFactory::load($this->getDatafile());
         }
 
         return $this->_excel;
     }
 
+    /**
+     * Get a cell value by row and column
+     *
+     * @param  int $row
+     * @param  int $column
+     * @return string
+     */
     protected function _getCellValue($row, $column)
     {
         return $this->_getExcel()->getActiveSheet()->getCellByColumnAndRow($column, $row)->getValue();
@@ -86,4 +118,4 @@ class MyExtension_Handler_CustomHandlerExcel2k7 extends HwImport_Handler_Abstrac
 
 // register the handler to HwImport
 // HwImport::registerHandler($identifier, $className)
-HwImport::registerHandler('MyCustomHandler', 'MyExtension_Handler_CustomHandlerExcel2k7');
+HwImport::registerHandler('MyCustomHandler', 'MyExtension_Handler_CustomHandlerExcel');
