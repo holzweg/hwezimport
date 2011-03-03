@@ -38,16 +38,60 @@
  */
 interface HwImport_Handler_Interface
 {
+    /**
+     * Set the data file location
+     *
+     * @param string $datafile
+     */
     public function setDatafile($datafile);
+
+    /**
+     * Get the data file location
+     *
+     * @return string
+     */
     public function getDatafile();
 
+    /**
+     * Set the CLI object
+     *
+     * @param eZCli $cli
+     */
     public function setCli(eZCli $user);
+
+    /**
+     * Get the CLI object
+     *
+     * @return eZCli
+     */
     public function getCli();
 
+    /**
+     * Set the importing user
+     *
+     * @param eZUser $user
+     */
     public function setUser(eZUser $user);
+
+    /**
+     * Get the importing user
+     *
+     * @return eZUser
+     */
     public function getUser();
 
+    /**
+     * Set the parent node
+     *
+     * @param eZContentObjectTreeNode $parentNode
+     */
     public function setParentNode(eZContentObjectTreeNode $parentNode);
+
+    /**
+     * Get the parent node
+     *
+     * @return eZContentObjectTreeNode
+     */
     public function getParentNode();
 
     /**
@@ -102,7 +146,18 @@ interface HwImport_Handler_Interface
      * @throws HwImport_Exception
      */
     public function getContentClass();
+
+    /**
+     * Get the used content class identifier for new nodes
+     * @return string
+     */
     public function getContentClassIdentifier();
 
+    /**
+     * Do the import
+     *
+     * @return void
+     * @throws HwImport_Exception
+     */
     public function run();
 }

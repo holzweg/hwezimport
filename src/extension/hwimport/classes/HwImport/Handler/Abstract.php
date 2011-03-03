@@ -266,6 +266,7 @@ abstract class HwImport_Handler_Abstract implements HwImport_Handler_Interface
      * Get an instance of the used content class
      *
      * @return eZContentClass
+     * @throws HwImport_Exception
      */
     public function getContentClass()
     {
@@ -281,6 +282,7 @@ abstract class HwImport_Handler_Abstract implements HwImport_Handler_Interface
      * Do the import (to be overwritten by handler implementations)
      *
      * @return void
+     * @throws HwImport_Exception
      */
     public function run()
     {
