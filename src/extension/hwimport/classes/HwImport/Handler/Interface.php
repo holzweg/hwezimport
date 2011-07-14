@@ -57,7 +57,7 @@ interface HwImport_Handler_Interface
      *
      * @param eZCli $cli
      */
-    public function setCli(eZCli $user);
+    public function setCli(eZCli $cli);
 
     /**
      * Get the CLI object
